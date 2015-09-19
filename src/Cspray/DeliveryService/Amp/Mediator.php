@@ -70,12 +70,17 @@ class Mediator implements DeliveryService\Mediator {
     }
 
     private function getDispatchCallback() {
-        $dispatchCb = function() {
-            $this->dispatchMessage();
-            $cb = $this->getDispatchCallback();
-            $this->watcherId = $this->reactor->immediately($cb);
-        };
-        return $dispatchCb->bindTo($this, get_class($this));
+        static $dispatchCb = null;
+        if (!$dispatchCb) {
+            $dispatchCb = function() {
+                $this->dispatchMessage();
+                $cb = $this->getDispatchCallback();
+                $this->watcherId = $this->reactor->immediately($cb);
+            };
+            $dispatchCb = $dispatchCb->bindTo($this, get_class($this));
+        }
+
+        return $dispatchCb;
     }
 
     private function getAmpPromisor() : Amp\Promisor {
