@@ -1,9 +1,9 @@
 --TEST--
-
+Ensures that you can start and stop sending messages at will
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;
@@ -17,6 +17,7 @@ $mediator = new Mediator($reactor, $transmitter, $receiver);
 
 $first = new DeliveryService\GenericMessage('generic', 1);
 $second = new DeliveryService\GenericMessage('generic', 2);
+$third = new DeliveryService\GenericMessage('generic', 3);
 
 $listener = function(DeliveryService\Message $message) {
     $type = $message->getType();
@@ -27,12 +28,29 @@ $receiver->listen('generic', $listener);
 
 $transmitter->send($first);
 $transmitter->send($second);
+$transmitter->send($third);
 
 $mediator->startSendingMessages();
 
-$reactor->tick(); # dequeue first message and schedule listener callbacks
-$reactor->tick(); # invoke first listener callbacks, dequeue next message and schedule second listener callbacks
-$reactor->tick(); #
+$reactor->tick();
+$mediator->stopSendingMessages();
+
+$reactor->tick();
+
+echo "stopped\n";
+
+$reactor->tick();
+$reactor->tick();
+$mediator->startSendingMessages();
+
+echo "started\n";
+
+$reactor->tick();
+$reactor->tick();
+$reactor->tick();
 --EXPECT--
 generic1
+stopped
+started
 generic2
+generic3

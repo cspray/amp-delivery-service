@@ -3,7 +3,7 @@ Ensure that we can count the number of successful results
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;
@@ -17,22 +17,16 @@ $mediator = new Mediator($reactor, $transmitter, $receiver);
 
 $msg = new DeliveryService\GenericMessage('generic');
 
-$receiver->listen('generic', function() {
-    echo "1\n";
-});
-$receiver->listen('generic', function() {
-    echo "2\n";
-});
-$receiver->listen('generic', function() {
-    echo "3\n";
-});
-$receiver->listen('generic', function() {
-    echo "4\n";
-});
+$receiver->listen('generic', function() {});
+$receiver->listen('generic', function() { throw new Exception; });
+$receiver->listen('generic', function() {});
+$receiver->listen('generic', function() {});
 
 $receipt = $transmitter->send($msg);
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
     echo $results->getNumberListeners();
+    echo count($results->getSuccessfulResults());
+    echo count($results->getFailureResults());
 });
 
 $mediator->startSendingMessages();
@@ -40,8 +34,4 @@ $mediator->startSendingMessages();
 $reactor->tick();
 $reactor->tick();
 --EXPECT--
-1
-2
-3
-4
-4
+431

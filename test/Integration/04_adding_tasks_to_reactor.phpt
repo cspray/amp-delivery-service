@@ -3,7 +3,7 @@ Ensure listeners can add watchers to the event loop
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;

@@ -1,9 +1,9 @@
 --TEST--
-Ensure that if a listener returns a Promise its resolved
+Ensure that we can count the number of successful results
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;
@@ -16,30 +16,32 @@ $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
 $msg = new DeliveryService\GenericMessage('generic');
-$deferred = new Amp\Deferred();
 
-$receiver->listen('generic', function() { return 1; });
-$receiver->listen('generic', function() use($deferred) {
-    return $deferred->promise();
+$receiver->listen('generic', function() {
+    echo "1\n";
 });
-$receiver->listen('generic', function() { return 3; });
-$receiver->listen('generic', function() { return 4; });
+$receiver->listen('generic', function() {
+    echo "2\n";
+});
+$receiver->listen('generic', function() {
+    echo "3\n";
+});
+$receiver->listen('generic', function() {
+    echo "4\n";
+});
 
 $receipt = $transmitter->send($msg);
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
-    foreach ($results->getSuccessfulResults() as $result) {
-        echo $result;
-    }
+    echo $results->getNumberListeners();
 });
 
 $mediator->startSendingMessages();
 
 $reactor->tick();
 $reactor->tick();
-$reactor->tick();
-$reactor->tick();
-$reactor->tick();
-
-$deferred->succeed(9);
---EXPECTF--
-1349
+--EXPECT--
+1
+2
+3
+4
+4

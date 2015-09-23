@@ -1,9 +1,9 @@
 --TEST--
-Ensure that Message promise only resolves after listeners invoked
+Ensure the Mediator dispatches any queued messages
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;
@@ -15,21 +15,14 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-
-$receiver->listen('generic', function() {
-    echo "listener\n";
+$receiver->listen('generic', function(DeliveryService\Message $message) {
+    echo $message->getType();
 });
 
-$promise = $transmitter->send($msg);
-$promise->delivered(function() {
-    echo "resolved\n";
-});
+$transmitter->send(new DeliveryService\GenericMessage('generic'));
 
 $mediator->startSendingMessages();
-
 $reactor->tick();
 $reactor->tick();
 --EXPECT--
-listener
-resolved
+generic

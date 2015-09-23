@@ -3,7 +3,7 @@ Ensure that we can count the number of successful results
 --FILE--
 <?php
 
-require_once dirname(dirname(dirname(dirname(dirname(dirname(__DIR__)))))) . '/vendor/autoload.php';
+require_once dirname(dirname(__DIR__)) . '/vendor/autoload.php';
 
 use Cspray\DeliveryService;
 use Cspray\DeliveryService\Amp\ReceiptPromisorFactory;
@@ -17,23 +17,15 @@ $mediator = new Mediator($reactor, $transmitter, $receiver);
 
 $msg = new DeliveryService\GenericMessage('generic');
 
-$id1 = $receiver->listen('generic', function() {
-    return 1;
-});
-$id2 = $receiver->listen('generic', function() {
-    return 2;
-});
-$id3 = $receiver->listen('generic', function() {
-    return 3;
-});
-$id4 = $receiver->listen('generic', function() {
-    return 4;
-});
+$receiver->listen('generic', function() { return 1; });
+$receiver->listen('generic', function() { throw new Exception('listener 2'); });
+$receiver->listen('generic', function() { return 3; });
+$receiver->listen('generic', function() { return 4; });
 
 $receipt = $transmitter->send($msg);
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
-    foreach ($results->getSuccessfulResults() as $key => $result) {
-        echo "{$key}:{$result}\n";
+    foreach ($results->getFailureResults() as $result) {
+        echo $result->getMessage();
     }
 });
 
@@ -42,7 +34,4 @@ $mediator->startSendingMessages();
 $reactor->tick();
 $reactor->tick();
 --EXPECTF--
-%s:1
-%s:2
-%s:3
-%s:4
+listener 2
