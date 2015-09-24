@@ -15,8 +15,6 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-
 $id1 = $receiver->listen('generic', function() {
     return 1;
 });
@@ -30,7 +28,7 @@ $id4 = $receiver->listen('generic', function() {
     return 4;
 });
 
-$receipt = $transmitter->send($msg);
+$receipt = $transmitter->send('generic');
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
     foreach ($results->getSuccessfulResults() as $key => $result) {
         echo "{$key}:{$result}\n";

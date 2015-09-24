@@ -15,7 +15,6 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
 $deferred = new Amp\Deferred();
 
 $receiver->listen('generic', function() { return 1; });
@@ -25,7 +24,7 @@ $receiver->listen('generic', function() use($deferred) {
 $receiver->listen('generic', function() { return 3; });
 $receiver->listen('generic', function() { return 4; });
 
-$receipt = $transmitter->send($msg);
+$receipt = $transmitter->send('generic');
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
     foreach ($results->getSuccessfulResults() as $result) {
         echo $result;

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "3218a8a90bb3eac1e724a48202f46bbb",
+    "hash": "634af7ee2844e5f8a6e41c4c4561a994",
     "packages": [
         {
             "name": "amphp/amp",
@@ -65,16 +65,16 @@
         },
         {
             "name": "cspray/delivery-service",
-            "version": "0.1.0",
+            "version": "0.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cspray/delivery-service.git",
-                "reference": "4bbdaab926d9bf4236384a0f4387e1ed8c44c2a7"
+                "reference": "6f2099055dffd9d3c0242c2dfbc7d8d5573e83ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cspray/delivery-service/zipball/4bbdaab926d9bf4236384a0f4387e1ed8c44c2a7",
-                "reference": "4bbdaab926d9bf4236384a0f4387e1ed8c44c2a7",
+                "url": "https://api.github.com/repos/cspray/delivery-service/zipball/6f2099055dffd9d3c0242c2dfbc7d8d5573e83ed",
+                "reference": "6f2099055dffd9d3c0242c2dfbc7d8d5573e83ed",
                 "shasum": ""
             },
             "require-dev": {
@@ -83,7 +83,7 @@
             },
             "type": "library",
             "autoload": {
-                "psr-0": {
+                "psr-4": {
                     "Cspray\\DeliveryService\\": "src/"
                 }
             },
@@ -92,7 +92,7 @@
                 "MIT"
             ],
             "description": "Abstraction to allow sending intra-process messages within an asynchronous event loop.",
-            "time": "2015-09-05 17:02:49"
+            "time": "2015-09-24 00:53:57"
         }
     ],
     "packages-dev": [

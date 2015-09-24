@@ -15,11 +15,11 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$receiver->listen('generic', function(DeliveryService\Message $message) {
-    echo $message->getType();
+$receiver->listen('generic', function($messageType, $payload) {
+    echo $messageType;
 });
 
-$transmitter->send(new DeliveryService\GenericMessage('generic'));
+$transmitter->send('generic');
 
 $mediator->startSendingMessages();
 $reactor->tick();

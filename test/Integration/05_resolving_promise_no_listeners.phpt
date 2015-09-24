@@ -16,8 +16,7 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-$promise = $transmitter->send($msg);
+$promise = $transmitter->send('generic');
 $promise->delivered(function() {
     echo 'resolved';
 });
