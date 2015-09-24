@@ -15,18 +15,14 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$first = new DeliveryService\GenericMessage('generic', 1);
-$second = new DeliveryService\GenericMessage('generic', 2);
-
-$listener = function(DeliveryService\Message $message) {
-    $type = $message->getType();
-    $payload = $message->getPayload();
+$listener = function($type, $payload) {
+    $payload = $payload[0];
     echo "{$type}{$payload}\n";
 };
 $receiver->listen('generic', $listener);
 
-$transmitter->send($first);
-$transmitter->send($second);
+$transmitter->send('generic', [1]);
+$transmitter->send('generic', [2]);
 
 $mediator->startSendingMessages();
 

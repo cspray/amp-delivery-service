@@ -15,15 +15,13 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-
 $receiver->listen('generic', function() use($reactor) {
     $reactor->immediately(function() {
         echo 'ran scheduled task';
     });
 });
 
-$transmitter->send($msg);
+$transmitter->send('generic');
 
 $mediator->startSendingMessages();
 

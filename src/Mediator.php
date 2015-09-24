@@ -50,15 +50,16 @@ class Mediator implements DeliveryService\Mediator {
     private function dispatchMessage() {
         if ($this->transmitter->getMessageQueue()->hasMessages()) {
             $messageReceiptPromisor = $this->transmitter->getMessageQueue()->dequeue();
-            $msg = $messageReceiptPromisor->getMessage();
+            $msgType = $messageReceiptPromisor->getMessageType();
+            $payload = $messageReceiptPromisor->getMessagePayload();
             $promisor = $messageReceiptPromisor->getReceiptPromisor();
             $listenerPromises = [];
-            foreach ($this->receiver->getListeners($msg->getType()) as $key => $listener) {
+            foreach ($this->receiver->getListeners($msgType) as $key => $listener) {
                 $listenerPromisor = $this->getAmpPromisor();
                 $listenerPromises[$key] = $listenerPromisor->promise();
-                $this->reactor->immediately(function() use($listener, $msg, $listenerPromisor) {
+                $this->reactor->immediately(function() use($listener, $msgType, $payload, $listenerPromisor) {
                     try {
-                        $listenerPromisor->succeed($listener($msg));
+                        $listenerPromisor->succeed($listener($msgType, $payload));
                     } catch (\Exception $exception) {
                         $listenerPromisor->fail($exception);
                     }

@@ -15,14 +15,12 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-
 $receiver->listen('generic', function() {});
 $receiver->listen('generic', function() { throw new Exception; });
 $receiver->listen('generic', function() {});
 $receiver->listen('generic', function() {});
 
-$receipt = $transmitter->send($msg);
+$receipt = $transmitter->send('generic');
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
     echo $results->getNumberListeners();
     echo count($results->getSuccessfulResults());

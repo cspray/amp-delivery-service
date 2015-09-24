@@ -15,8 +15,6 @@ $transmitter = new DeliveryService\StandardTransmitter($promisorFactory);
 $receiver = new DeliveryService\StandardReceiver();
 $mediator = new Mediator($reactor, $transmitter, $receiver);
 
-$msg = new DeliveryService\GenericMessage('generic');
-
 $receiver->listen('generic', function() {
     echo "1\n";
 });
@@ -30,7 +28,7 @@ $receiver->listen('generic', function() {
     echo "4\n";
 });
 
-$receipt = $transmitter->send($msg);
+$receipt = $transmitter->send('generic');
 $receipt->delivered(function(DeliveryService\DeliveryResults $results) {
     echo $results->getNumberListeners();
 });
